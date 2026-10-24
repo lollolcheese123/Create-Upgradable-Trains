@@ -1,5 +1,11 @@
 {
-  "itemGroup.cut": "Example Mod Tab",
-  "block.cut.example_block": "Example Block",
-  "item.cut.example_item": "Example Item"
+  "cut.gui.train_engine.title": "Train Engine",
+  "cut.gui.train_engine.default_type": "Default",
+  "cut.gui.train_engine.confirm": "Confirm",
+  "cut.gui.train_engine.goggle_tooltip_header": "Train Type: ",
+  "cut.gui.train_engine.max_speed_text": "SPD",
+  "cut.gui.train_engine.max_turn_speed_text": "T.SPD",
+  "cut.gui.train_engine.accel_text": "ACC",
+  "cut.gui.train_engine.break_text": "BRK",
+  "cut.gui.train_engine.fuel_eff_text": "FUEL"
 }

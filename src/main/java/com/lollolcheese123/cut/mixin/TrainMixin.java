@@ -1,12 +1,12 @@
 package com.lollolcheese123.cut.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.lollolcheese123.cut.duck.TrainAddons;
+import com.lollolcheese123.cut.train.TrainType;
 import com.lollolcheese123.cut.train.TrainTypes;
 import com.lollolcheese123.cut.util.CutCodecs;
+import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.TrackGraph;
@@ -16,7 +16,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,12 +23,16 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 @Mixin(Train.class)
 public abstract class TrainMixin implements TrainAddons {
+	@Shadow public int fuelTicks;
+
 	@Unique private ResourceLocation CUT$trainTypeId = TrainTypes.DEFAULT_ID;
+	@Unique private float CUT$fuelRemainder;
 
 	@Override public ResourceLocation CUT$getTrainTypeId() {
 		return this.CUT$trainTypeId;
@@ -38,13 +41,29 @@ public abstract class TrainMixin implements TrainAddons {
 		this.CUT$trainTypeId = resourceLocation;
 	}
 
+	@Unique private Boolean clientSide = null;
+
+	@Unique
+	public boolean CUT$isClientSide() {
+		if (clientSide != null) return clientSide;
+
+		try {
+			clientSide = this.carriages.getFirst().anyAvailableEntity().level().isClientSide;
+		} catch (Exception e) {
+			return false;
+		}
+		
+		return clientSide;
+	}
+
 	@Shadow @Final @Mutable
 	public static StreamCodec<RegistryFriendlyByteBuf, Train> STREAM_CODEC;
-	@Shadow public int fuelTicks;
 	@Shadow public double speed;
 
+	@Shadow public abstract float acceleration();
+
 	@Shadow
-	public abstract float acceleration();
+	public List<Carriage> carriages;
 
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void CUT$wrapCodec(CallbackInfo ci) {
@@ -72,19 +91,32 @@ public abstract class TrainMixin implements TrainAddons {
 					.CUT$setTrainTypeId(ResourceLocation.parse(tag.getString("CUTTrainType")));
 	}
 
+	@Unique
+	private TrainType CUT$getTrainType() {
+		return TrainTypes.lookupOrFallback(CUT$isClientSide(), CUT$trainTypeId);
+	}
+
 	@ModifyReturnValue(method = "maxSpeed", at = @At("RETURN"))
-	private float alterMaxSpeed(float original) {
-		return original * 1000;
+	private float CUT$alterMaxSpeed(float original) {
+		return original * CUT$getTrainType().maxSpeedMod();
 	}
 
 	@ModifyReturnValue(method = "maxTurnSpeed", at = @At("RETURN"))
-	private float alterMaxTurnSpeed(float original) {
-		return original * 1000;
+	private float CUT$alterMaxTurnSpeed(float original) {
+		return original * CUT$getTrainType().maxTurnSpeedMod();
 	}
 
 	@ModifyReturnValue(method = "acceleration", at = @At("RETURN"))
-	private float alterAcceleration(float original) {
-		return original * 10;
+	private float CUT$alterAcceleration(float original) {
+		return original * CUT$getTrainType().accelMod();
+	}
+
+	@Unique
+	public float CUT$deceleration() {
+		float original = (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainAcceleration.getF()
+				: AllConfigs.server().trains.trainAcceleration.getF()) / 400;
+
+		return original * CUT$getTrainType().decelMod();
 	}
 
 	@Redirect(method = "tickPassiveSlowdown",
@@ -106,11 +138,15 @@ public abstract class TrainMixin implements TrainAddons {
 		return braking ? CUT$deceleration() : acceleration();
 	}
 
-	@Unique
-	public float CUT$deceleration() {
-		float originalDecel = (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainAcceleration.getF()
-				: AllConfigs.server().trains.trainAcceleration.getF()) / 400;
+	@Inject(method = "burnFuel", at = @At("HEAD"), cancellable = true)
+	private void CUT$burnFuel(CallbackInfo ci) {
+		if (fuelTicks <= 0) return;
 
-		return originalDecel * 10;
+		CUT$fuelRemainder += CUT$getTrainType().trueFuelMult();
+		int whole = (int) CUT$fuelRemainder;
+		CUT$fuelRemainder -= whole;
+
+		fuelTicks = Math.max(0, fuelTicks - whole);
+		ci.cancel();
 	}
 }

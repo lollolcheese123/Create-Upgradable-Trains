@@ -22,7 +22,7 @@ public class TrainTypeManager extends SimpleJsonResourceReloadListener {
 	private volatile Map<ResourceLocation, TrainType> types = Map.of();
 
 	private TrainTypeManager() {
-		super(GSON, CreateUpgradableTrains.MODID + "/train_types");
+		super(GSON, "train_types");
 	}
 
 	@Override
@@ -32,8 +32,9 @@ public class TrainTypeManager extends SimpleJsonResourceReloadListener {
 		Map<ResourceLocation, TrainType> loaded = new HashMap<>();
 		files   .forEach((id, json) -> TrainType.CODEC.parse(JsonOps.INSTANCE, json)
 				.resultOrPartial(err -> CreateUpgradableTrains.LOGGER.error("Bad train type {}: {}", id, err))
-				.ifPresent(t -> loaded.put(id, t)));
+				.ifPresent(t -> loaded.put(id, t.withId(id))));
 		types = Map.copyOf(loaded);
+		CreateUpgradableTrains.LOGGER.info("TrainTypeManager apply: Loaded {} Train Types from {} files!", types.size(), files.size());
 	}
 
 	public @Nullable TrainType get(ResourceLocation id) {

@@ -4,7 +4,6 @@ import com.lollolcheese123.cut.CreateUpgradableTrains;
 import com.lollolcheese123.cut.client.data.ClientTrainTypes;
 import com.lollolcheese123.cut.server.data.TrainTypeManager;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 

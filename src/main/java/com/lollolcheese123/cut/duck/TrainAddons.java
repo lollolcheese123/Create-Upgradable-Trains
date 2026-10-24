@@ -6,5 +6,7 @@ public interface TrainAddons {
 	ResourceLocation CUT$getTrainTypeId();
 	void CUT$setTrainTypeId(ResourceLocation resourceLocation);
 
-	public float CUT$deceleration();
+	float CUT$deceleration();
+
+	boolean CUT$isClientSide();
 }
