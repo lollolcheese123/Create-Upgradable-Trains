@@ -38,28 +38,28 @@ public class ClientTrainTypes {
 	public static float getMaxTurnSpeedMult() {
 		float max = TrainType.FALLBACK.maxTurnSpeedMod();
 		for (TrainType type : types.values()) {
-			if (type.maxSpeedMod() > max) max = type.maxTurnSpeedMod();
+			if (type.maxTurnSpeedMod() > max) max = type.maxTurnSpeedMod();
 		}
 		return max;
 	}
 	public static float getMaxAccelMult() {
 		float max = TrainType.FALLBACK.accelMod();
 		for (TrainType type : types.values()) {
-			if (type.maxSpeedMod() > max) max = type.accelMod();
+			if (type.accelMod() > max) max = type.accelMod();
 		}
 		return max;
 	}
 	public static float getMaxDecelMult() {
 		float max = TrainType.FALLBACK.decelMod();
 		for (TrainType type : types.values()) {
-			if (type.maxSpeedMod() > max) max = type.decelMod();
+			if (type.decelMod() > max) max = type.decelMod();
 		}
 		return max;
 	}
 	public static float getMaxFuelEff() {
 		float max = TrainType.FALLBACK.fuelEffMod();
 		for (TrainType type : types.values()) {
-			if (type.maxSpeedMod() > max) max = type.fuelEffMod();
+			if (type.fuelEffMod() > max) max = type.fuelEffMod();
 		}
 		return max;
 	}

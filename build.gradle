@@ -9,6 +9,14 @@ version = mod_version
 group = mod_group_id
 
 repositories {
+    maven {
+        name = "Jared's maven"
+        url = "https://maven.blamejared.com/"
+    } // JEI
+    maven {
+        name = "TerraformersMC"
+        url = "https://maven.terraformersmc.com/"
+    } // EMI
     maven { url = "https://maven.createmod.net" }           // Create, Ponder, Flywheel
     maven { url = "https://mvn.devos.one/snapshots" }       // Registrate
     maven { url = "https://modmaven.dev" }                  // fallback
@@ -112,11 +120,18 @@ dependencies {
     runtimeOnly("dev.engine-room.flywheel:flywheel-neoforge-${minecraft_version}:${flywheel_version}")
     implementation("com.tterrag.registrate:Registrate:${registrate_version}")
     // Create: SnR (optional)
-    compileOnly "maven.modrinth:create-steam-n-rails-${minecraft_version}:${steam_and_rails_version}"
-    runtimeOnly "maven.modrinth:create-steam-n-rails-${minecraft_version}:${steam_and_rails_version}"
+    compileOnly "maven.modrinth:create-steam-n-rails-${minecraft_version}:${steam_and_rails_version}+neoforge-mc${minecraft_version}"
+    runtimeOnly "maven.modrinth:create-steam-n-rails-${minecraft_version}:${steam_and_rails_version}+neoforge-mc${minecraft_version}"
     // Create: Numismatics (optional)
-    compileOnly "maven.modrinth:numismatics:${numismatics_version}"
-    runtimeOnly "maven.modrinth:numismatics:${numismatics_version}"
+    compileOnly "maven.modrinth:numismatics:${numismatics_version}+neoforge-mc${minecraft_version}"
+    runtimeOnly "maven.modrinth:numismatics:${numismatics_version}+neoforge-mc${minecraft_version}"
+    // JEI (optional)
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    runtimeOnly "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+    // EMI (optional)
+    compileOnly "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}:api"
+    runtimeOnly "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

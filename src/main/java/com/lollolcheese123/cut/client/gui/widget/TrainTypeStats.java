@@ -108,7 +108,6 @@ public class TrainTypeStats extends AbstractWidget {
 		int scaledGBars = Math.round(G_BARS * goggleMult);
 		int scaledDBars = Math.round(D_BARS * goggleMult);
 
-
 		return Component.empty()
 				.append(bars(Math.min(barsCount, scaledRBars), ChatFormatting.DARK_RED))
 				.append(bars(Math.min(barsCount - scaledRBars, scaledYBars), ChatFormatting.YELLOW))
