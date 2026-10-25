@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = CreateUpgradableTrains.MODID)
-public class CUTSyncEvents {
+public final class CUTSyncEvents {
 
 	@SubscribeEvent
 	public static void onDataPackSync(OnDatapackSyncEvent event) {

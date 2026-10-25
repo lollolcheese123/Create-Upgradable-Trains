@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @EventBusSubscriber(modid = CreateUpgradableTrains.MODID)
-public class CUTNetworking {
+public final class CUTNetworking {
 
 	@SubscribeEvent
 	public static void register(RegisterPayloadHandlersEvent event) {

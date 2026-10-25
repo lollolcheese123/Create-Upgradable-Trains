@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.List;
 
 @EventBusSubscriber(modid = CreateUpgradableTrains.MODID)
-public class CUTDebugCommands {
+public final class CUTDebugCommands {
 
 	@SubscribeEvent
 	public static void OnRegisterCommands(RegisterCommandsEvent event) {

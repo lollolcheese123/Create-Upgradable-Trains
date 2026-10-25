@@ -3,6 +3,7 @@ package com.lollolcheese123.cut.client.gui.widget;
 import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
 import com.lollolcheese123.cut.client.gui.helper.Animated;
 import com.lollolcheese123.cut.compat.NumismaticsCompat;
+import com.lollolcheese123.cut.compat.RecipeViewerCompat;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.fml.ModList;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +41,17 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 	private static final int GRAY = 0xFFAAAAAA;
 	private static final int BLACK = 0xFF000000;
 
-	private record Entry(List<ItemStack> icons, String name, String detail, int detailColor) {}
+	private record Entry(
+			List<ItemStack> icons,
+			String name,
+			String detail,
+			int detailColor,
+			@Nullable TagKey<Item> tag
+	) {
+		Entry(List<ItemStack> icons, String name, String detail, int detailColor) {
+			this(icons, name, detail, detailColor, null);
+		}
+	}
 
 	private final List<Entry> entries = new ArrayList<>();
 	private final Animated scrollAnim;
@@ -82,6 +94,7 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 			int owned = line.reused() + line.have();
 			boolean ok = owned >= line.total();
 
+			TagKey<Item> tagOrNull = null;
 			List<ItemStack> icons;
 			String name;
 			var value = line.target().value();
@@ -96,8 +109,9 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 						.orElse(List.of());
 				if (icons.isEmpty()) icons = List.of(new ItemStack(Items.BARRIER));
 				name = tagName(tag.location());
+				tagOrNull = tag;
 			}
-			entries.add(new Entry(icons, name, owned + "/" + line.total(), ok ? GREEN : RED));
+			entries.add(new Entry(icons, name, owned + "/" + line.total(), ok ? GREEN : RED, tagOrNull));
 		}
 
 		if (quote.refundMoney() > 0)
@@ -118,13 +132,12 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 			}
 
 		for (Map.Entry<Item, Integer> entry : quote.refund().entrySet())
-//			if (entry.getValue() > 0)
-				entries.add(new Entry(
-						List.of(entry.getKey().getDefaultInstance()),
-						entry.getKey().getDescription().getString(),
-						"Refund: +" + entry.getValue(),
-						GREEN
-				));
+			entries.add(new Entry(
+					List.of(entry.getKey().getDefaultInstance()),
+					entry.getKey().getDescription().getString(),
+					"Refund: +" + entry.getValue(),
+					GREEN
+			));
 	}
 
 	private static String tagName(ResourceLocation id) {
@@ -188,6 +201,26 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 	}
 
 	@Override
+	public boolean mouseClicked(double mx, double my, int button) {
+		if (!active || !visible || !isMouseOver(mx, my)) return false;
+		if (button != 0 && button != 1) return false;
+
+		double localY = (my - getY()) / SCALE + scrollAnim.get();
+		int row = (int) Math.floor(localY / ROW_H);
+		if (row < 0 || row >= entries.size()) return false;
+
+		Entry entry = entries.get(row);
+		ItemStack icon = iconOf(entry);
+		if (icon.isEmpty() || icon.is(Items.BARRIER)) return false;
+
+		if (RecipeViewerCompat.show(icon, entry.tag(), button == 1)) {
+			playDownSound(Minecraft.getInstance().getSoundManager());
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	protected void updateWidgetNarration(@NotNull NarrationElementOutput out) {}
 
 	private static int marqueeOffset(int overflow) {
@@ -221,5 +254,9 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 		g.enableScissor(sx1, sy1, sx2, sy2);
 		g.drawString(font, text, x - marqueeOffset(textW - maxW), y, color, false);
 		g.disableScissor();
+	}
+
+	private static ItemStack iconOf(Entry entry) {
+		return entry.icons().get((int) ((Util.getMillis() / 1000) % entry.icons().size()));
 	}
 }
