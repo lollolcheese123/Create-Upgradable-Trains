@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "cut:block/train_engine" },
+    "facing=east":  { "model": "cut:block/train_engine", "y": 90 },
+    "facing=south": { "model": "cut:block/train_engine", "y": 180 },
+    "facing=west":  { "model": "cut:block/train_engine", "y": 270 }
+  }
+}

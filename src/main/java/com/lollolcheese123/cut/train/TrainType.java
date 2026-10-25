@@ -3,12 +3,10 @@ package com.lollolcheese123.cut.train;
 import com.lollolcheese123.cut.util.ItemOrTag;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.item.Item;
 
 import java.util.Comparator;
 import java.util.Map;

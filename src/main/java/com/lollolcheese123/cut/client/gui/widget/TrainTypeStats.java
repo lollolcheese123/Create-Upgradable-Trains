@@ -1,6 +1,7 @@
 package com.lollolcheese123.cut.client.gui.widget;
 
 import com.lollolcheese123.cut.client.data.ClientTrainTypes;
+import com.lollolcheese123.cut.client.gui.helper.Marquee;
 import com.lollolcheese123.cut.train.TrainType;
 import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
@@ -52,27 +53,13 @@ public class TrainTypeStats extends AbstractWidget {
 		info.add(getRow(false, "cut.gui.train_engine.break_text", type.decelMod(), ClientTrainTypes.getMaxDecelMult()));
 		info.add(getRow(false, "cut.gui.train_engine.fuel_eff_text", type.fuelEffMod(), ClientTrainTypes.getMaxFuelEff()));
 
-		float height = 0;
+		float rowY = 0;
 		for (Component component : info) {
-			drawScaled(g, font, component, getX(), (int) Math.floor(getY() + height + 4), SCALE,0xFFFFFF);
-			height += font.lineHeight*SCALE + SPACING;
+			Marquee.draw(g, font, component, getX(), (int) Math.floor(getY() + rowY + 4),
+					width, SCALE, 0xFFFFFF);
+			rowY += font.lineHeight * SCALE + SPACING;
 		}
-
 		g.disableScissor();
-	}
-
-	private static void drawScaled(
-			GuiGraphics g,
-			Font font,
-			Component text,
-			int x, int y,
-			float scale,
-			int color) {
-		g.pose().pushPose();
-		g.pose().translate(x, y, 0);
-		g.pose().scale(scale, scale, 1f);
-		g.drawString(font, text, 0, 0, color, false);
-		g.pose().popPose();
 	}
 
 	@Override

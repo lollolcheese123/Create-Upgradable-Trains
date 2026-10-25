@@ -43,17 +43,6 @@ public class CUTDebugCommands {
 								)
 						)
 		);
-
-
-
-
-//		event.getDispatcher().register(
-//				Commands.literal("cut")
-//					.requires(src -> src.hasPermission(2))
-//					.then(Commands.literal("debug")
-//						.then(Commands.literal("list")
-//							.executes(ctx -> list(ctx.getSource()))
-//						.then(Commands.literal("get")))));
 	}
 
 	private static int list(CommandSourceStack src) {

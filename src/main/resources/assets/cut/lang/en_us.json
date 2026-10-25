@@ -1,4 +1,6 @@
 {
+  "block.cut.train_engine": "Train Engine",
+  "cut.item_group.name": "Create: Upgradable Trains",
   "cut.gui.train_engine.title": "Train Engine",
   "cut.gui.train_engine.default_type": "Default",
   "cut.gui.train_engine.confirm": "Confirm",

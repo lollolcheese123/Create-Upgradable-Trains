@@ -3,6 +3,7 @@ package com.lollolcheese123.cut.client.gui.window;
 import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
 import com.lollolcheese123.cut.client.gui.TrainTypeOption;
 import com.lollolcheese123.cut.client.gui.widget.HitArea;
+import com.lollolcheese123.cut.client.gui.widget.TrainTypeCostDisplay;
 import com.lollolcheese123.cut.client.gui.widget.TrainTypeOptionList;
 import com.lollolcheese123.cut.client.gui.widget.TrainTypeStats;
 import com.lollolcheese123.cut.packets.QuotePayload;
@@ -27,6 +28,7 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 	private final List<TrainTypeOption> options;
 	private TrainTypeOptionList list;
 	private TrainTypeStats stats;
+	private TrainTypeCostDisplay costDisplay;
 	private HitArea confirm;
 	private TrainTypeOption selected;
 
@@ -60,8 +62,11 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 		});
 		addRenderableWidget(this.list);
 
-		this.stats = new TrainTypeStats(guiLeft + 139, guiTop + 46, 77, 121, this.list);
+		this.stats = new TrainTypeStats(guiLeft + 139, guiTop + 44, 80, 46, this.list);
 		addRenderableWidget(this.stats);
+
+		this.costDisplay = new TrainTypeCostDisplay(guiLeft + 139, guiTop + 95, 80, 75);
+		addRenderableWidget(this.costDisplay);
 
 		confirm = new HitArea(guiLeft + 201, guiTop + 196, 17, 17,
 				Component.translatable("cut.gui.train_engine.confirm"), () -> {
@@ -109,6 +114,7 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 		this.quotedId = id;
 		this.quote = quote;
 		confirm.active = canConfirm(selected);
+		this.costDisplay.setQuote(quote);
 	}
 
 	private boolean canConfirm(TrainTypeOption o) {

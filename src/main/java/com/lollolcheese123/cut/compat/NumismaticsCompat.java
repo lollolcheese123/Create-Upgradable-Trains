@@ -34,4 +34,11 @@ public class NumismaticsCompat {
 
 		return out;
 	}
+
+	public static List<ItemStack> getDenominationsLowerOrEqual(int amount) {
+		List<ItemStack> out = new ArrayList<>();
+		for (Coin coin : Coin.values())
+			if (coin.value <= amount) out.add(NumismaticsItems.getCoin(coin).asItem().getDefaultInstance());
+		return out.isEmpty() ? List.of(NumismaticsItems.getCoin(Coin.closest(amount)).asItem().getDefaultInstance()) : out;
+	}
 }

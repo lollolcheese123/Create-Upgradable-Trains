@@ -1,6 +1,5 @@
 package com.lollolcheese123.cut.blocks.blockentity;
 
-import com.lollolcheese123.cut.CreateUpgradableTrains;
 import com.lollolcheese123.cut.client.data.ClientTrainTypes;
 import com.lollolcheese123.cut.client.gui.TrainTypeOption;
 import com.lollolcheese123.cut.client.gui.widget.TrainTypeStats;

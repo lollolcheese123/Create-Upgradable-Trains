@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "top":   "cut:block/train_engine/top",
+    "front": "cut:block/train_engine/front",
+    "side":  "cut:block/train_engine/side",
+    "bottom": "cut:block/train_engine/bottom"
+  }
+}
