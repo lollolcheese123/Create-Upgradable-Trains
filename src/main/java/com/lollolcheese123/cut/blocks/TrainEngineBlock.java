@@ -9,7 +9,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -48,7 +47,7 @@ public class TrainEngineBlock extends BaseEntityBlock implements EntityBlock, IW
 			Player player,
 			BlockHitResult hit
 	) {
-		if (level.isClientSide) TrainEngineClient.openScreen(pos);
+		if (level.isClientSide) TrainEngineClient.openScreen(pos, player);
 		return InteractionResult.sidedSuccess(level.isClientSide);
 	}
 }

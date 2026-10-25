@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Mixin(StationBlockEntity.class)
-public class StationBlockEntityMixin {
+public abstract class StationBlockEntityMixin {
 
 	@Inject(method = "assemble", at = @At(
 			value = "INVOKE",

@@ -1,7 +1,5 @@
 package com.lollolcheese123.cut.mixin;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.lollolcheese123.cut.duck.CarriageAddons;
 import com.lollolcheese123.cut.train.TrainTypes;
 import com.lollolcheese123.cut.util.CutCodecs;
@@ -13,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Carriage.class)
-public class CarriageMixin implements CarriageAddons {
+public abstract class CarriageMixin implements CarriageAddons {
 	@Unique private ResourceLocation CUT$trainTypeId = TrainTypes.DEFAULT_ID;
 
 	@Override public ResourceLocation CUT$getTrainTypeId() {

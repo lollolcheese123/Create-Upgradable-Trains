@@ -6,6 +6,7 @@ import com.lollolcheese123.cut.registry.CUTItems;
 import com.mojang.logging.LogUtils;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 
@@ -18,5 +19,7 @@ public class CreateUpgradableTrains {
 		CUTBlocks.register(modEventBus);
 		CUTItems.register(modEventBus);
 		CUTBlockEntities.register(modEventBus);
+
+		LOGGER.warn(ModList.get().isLoaded("numismatics") ? "numismatics loaded" : "numismatics not loaded");
 	}
 }

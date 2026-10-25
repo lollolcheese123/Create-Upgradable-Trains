@@ -2,6 +2,9 @@ package com.lollolcheese123.cut.events;
 
 import com.lollolcheese123.cut.CreateUpgradableTrains;
 import com.lollolcheese123.cut.client.data.ClientTrainTypes;
+import com.lollolcheese123.cut.client.gui.window.TrainEngineScreen;
+import com.lollolcheese123.cut.packets.QuotePayload;
+import com.lollolcheese123.cut.packets.RequestQuotePayload;
 import com.lollolcheese123.cut.packets.SelectOptionPayload;
 import com.lollolcheese123.cut.packets.SyncTrainTypesPayload;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -21,11 +24,22 @@ public class CUTNetworking {
 				SyncTrainTypesPayload.STREAM_CODEC,
 				(payload, context) -> ClientTrainTypes.set(payload.types())
 		);
+		registrar.playToClient(
+				QuotePayload.TYPE,
+				QuotePayload.STREAM_CODEC,
+				TrainEngineScreen::handleIncomingQuote
+		);
 
 		registrar.playToServer(
 				SelectOptionPayload.TYPE,
-				SelectOptionPayload.CODEC,
-				SelectOptionPayload::handle);
+				SelectOptionPayload.STREAM_CODEC,
+				SelectOptionPayload::handle
+		);
+		registrar.playToServer(
+				RequestQuotePayload.TYPE,
+				RequestQuotePayload.STREAM_CODEC,
+				RequestQuotePayload::handle
+		);
 	}
 
 }

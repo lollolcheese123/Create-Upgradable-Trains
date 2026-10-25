@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Navigation.class)
-public class NavigationMixin {
+public abstract class NavigationMixin {
 
 	@Redirect(method = "tick",
 				at = @At(value = "INVOKE",

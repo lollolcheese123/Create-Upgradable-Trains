@@ -20,10 +20,12 @@ public record SelectOptionPayload(
 	public static final Type<SelectOptionPayload> TYPE =
 			new Type<>(ResourceLocation.fromNamespaceAndPath(CreateUpgradableTrains.MODID, "select_option"));
 
-	public static final StreamCodec<RegistryFriendlyByteBuf, SelectOptionPayload> CODEC =
+	public static final StreamCodec<RegistryFriendlyByteBuf, SelectOptionPayload> STREAM_CODEC =
 			StreamCodec.composite(
-					BlockPos.STREAM_CODEC, SelectOptionPayload::pos,
-					ResourceLocation.STREAM_CODEC, SelectOptionPayload::id,
+					BlockPos.STREAM_CODEC,
+					SelectOptionPayload::pos,
+					ResourceLocation.STREAM_CODEC,
+					SelectOptionPayload::id,
 					SelectOptionPayload::new
 			);
 
@@ -37,6 +39,6 @@ public record SelectOptionPayload(
 		Level level = player.level();
 		if (!level.isLoaded(p.pos()) || player.distanceToSqr(p.pos().getCenter()) > 64) return;
 		if (level.getBlockEntity(p.pos()) instanceof TrainEngineBlockEntity be)
-			be.select(p.id());
+			be.select(p.id(), player);
 	}
 }

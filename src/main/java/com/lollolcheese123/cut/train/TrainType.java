@@ -1,12 +1,17 @@
 package com.lollolcheese123.cut.train;
 
+import com.lollolcheese123.cut.util.ItemOrTag;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.Item;
 
 import java.util.Comparator;
+import java.util.Map;
 import java.util.Optional;
 
 public record TrainType(
@@ -19,7 +24,9 @@ public record TrainType(
 		float trueFuelMult,
 		int tier,
 		Optional<String> translatableName,
-		String name
+		String name,
+		Map<ItemOrTag, Integer> itemCost,
+		int moneyCost
 ) {
 	public static final TrainType FALLBACK = new TrainType(
 			TrainTypes.DEFAULT_ID,
@@ -31,7 +38,9 @@ public record TrainType(
 			1,
 			-1,
 			Optional.of("cut.gui.train_engine.default_type"),
-			"Unnamed Train Type"
+			"Unnamed Train Type",
+			Map.of(),
+			0
 	);
 
 	public static final Codec<TrainType> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -42,7 +51,9 @@ public record TrainType(
 			Codec.FLOAT.optionalFieldOf("fuel_eff", TrainType.FALLBACK.fuelEffMod).forGetter(TrainType::fuelEffMod),
 			Codec.INT.optionalFieldOf("tier", 1).forGetter(TrainType::tier),
 			Codec.STRING.optionalFieldOf("translatable_name").forGetter(TrainType::translatableName),
-			Codec.STRING.optionalFieldOf("name", TrainType.FALLBACK.name()).forGetter(TrainType::name)
+			Codec.STRING.optionalFieldOf("name", TrainType.FALLBACK.name()).forGetter(TrainType::name),
+			Codec.unboundedMap(ItemOrTag.CODEC, ExtraCodecs.POSITIVE_INT).optionalFieldOf("item_cost", Map.of()).forGetter(TrainType::itemCost),
+			ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("money_cost", 0).forGetter(TrainType::moneyCost)
 	).apply(i, (
 			speed,
 			turnSpeed,
@@ -51,7 +62,9 @@ public record TrainType(
 			fuelEff,
 			tier,
 			tlName,
-			name
+			name,
+			itemCost,
+			moneyCost
 	) -> new TrainType(
 			TrainTypes.DEFAULT_ID,
 			speed,
@@ -62,7 +75,9 @@ public record TrainType(
 			1f/fuelEff,
 			tier,
 			tlName,
-			name
+			name,
+			itemCost,
+			moneyCost
 	)));
 
 	public static final Codec<TrainType> SEND_CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -75,7 +90,9 @@ public record TrainType(
 			Codec.FLOAT.fieldOf("true_fuel_eff_mod").forGetter(TrainType::trueFuelMult),
 			Codec.INT.fieldOf("tier").forGetter(TrainType::tier),
 			Codec.STRING.optionalFieldOf("translatable_name").forGetter(TrainType::translatableName),
-			Codec.STRING.optionalFieldOf("name", TrainType.FALLBACK.name()).forGetter(TrainType::name)
+			Codec.STRING.optionalFieldOf("name", TrainType.FALLBACK.name()).forGetter(TrainType::name),
+			Codec.unboundedMap(ItemOrTag.CODEC, ExtraCodecs.POSITIVE_INT).optionalFieldOf("item_cost", Map.of()).forGetter(TrainType::itemCost),
+			ExtraCodecs.NON_NEGATIVE_INT.optionalFieldOf("money_cost", 0).forGetter(TrainType::moneyCost)
 	).apply(i, TrainType::new));
 
 	public TrainType withId(ResourceLocation id) {
@@ -87,7 +104,9 @@ public record TrainType(
 				fuelEffMod, trueFuelMult,
 				tier,
 				translatableName,
-				name
+				name,
+				itemCost,
+				moneyCost
 		);
 	}
 
