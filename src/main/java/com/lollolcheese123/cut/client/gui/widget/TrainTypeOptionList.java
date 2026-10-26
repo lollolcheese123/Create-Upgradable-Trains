@@ -29,15 +29,16 @@ public class TrainTypeOptionList extends AbstractWidget {
 	public TrainTypeOptionList(
 			int x, int y, int w, int h,
 			List<TrainTypeOption> options,
-			int initialSelected,
+			int appliedIndex,
+			int detailsIndex,
 			Consumer<TrainTypeOption> onSelect
 	) {
 		super(x, y, w, h, Component.empty());
 		this.options = options;
-		this.highlightY = new Animated(initialSelected * ROW_H, 250);
+		this.highlightY = new Animated(detailsIndex * ROW_H, 250);
 		this.scrollAnim = new Animated(0, 120);
-		this.selected = initialSelected;
-		this.details = initialSelected;
+		this.selected = appliedIndex;
+		this.details = detailsIndex;
 		this.onSelect = onSelect;
 	}
 

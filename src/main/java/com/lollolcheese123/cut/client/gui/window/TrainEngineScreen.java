@@ -55,8 +55,13 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 		setWindowSize(CUTTextures.TRAIN_ENGINE_BG.getWidth(), CUTTextures.TRAIN_ENGINE_BG.getHeight());
 		super.init();
 
-		int initialIndex = Math.max(0, options.indexOf(selected));
-		this.list = new TrainTypeOptionList(guiLeft + 5, guiTop + 20, 110, 165, options, initialIndex, o -> {
+		int appliedIndex = indexOfApplied();
+		int detailsIndex = Math.max(0, options.indexOf(selected));
+		this.list = new TrainTypeOptionList(guiLeft + 5, guiTop + 20, 110, 165,
+				options,
+				appliedIndex,
+				detailsIndex,
+				o -> {
 			this.selected = o;
 			this.confirm.active = canConfirm(selected);
 		});
@@ -67,6 +72,7 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 
 		this.costDisplay = new TrainTypeCostDisplay(guiLeft + 139, guiTop + 95, 80, 75);
 		addRenderableWidget(this.costDisplay);
+		if (quote != null) costDisplay.setQuote(quote);
 
 		confirm = new HitArea(guiLeft + 201, guiTop + 196, 17, 17,
 				Component.translatable("cut.gui.train_engine.confirm"), () -> {
@@ -126,5 +132,11 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 	public static void handleIncomingQuote(QuotePayload payload, IPayloadContext ctx) {
 		if (Minecraft.getInstance().screen instanceof TrainEngineScreen screen && screen.isFor(payload.pos()))
 			screen.setQuote(payload.id(), payload.quote());
+	}
+
+	private int indexOfApplied() {
+		for (int i = 0; i < options.size(); i++)
+			if (options.get(i).id().equals(be.getTrainType())) return i;
+		return -1;
 	}
 }

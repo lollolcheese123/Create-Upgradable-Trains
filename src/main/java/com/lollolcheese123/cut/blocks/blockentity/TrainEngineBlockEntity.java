@@ -16,6 +16,8 @@ import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
 import joptsimple.internal.Strings;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
@@ -26,6 +28,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -70,6 +73,18 @@ public class TrainEngineBlockEntity extends BlockEntity implements IHaveGoggleIn
 						this.paidItems.values().removeIf(value -> value <= 0);
 			});
 		paidMoney = tag.getInt("paid_money");
+	}
+
+	@Override
+	protected void collectImplicitComponents(DataComponentMap.Builder components) {
+		super.collectImplicitComponents(components);
+		if (level == null) return;
+		if (trainTypeId.equals(TrainTypes.DEFAULT_ID) && paidItems.isEmpty() && paidMoney == 0) return;
+
+		CompoundTag tag = new CompoundTag();
+		saveAdditional(tag, level.registryAccess());
+		BlockEntity.addEntityType(tag, getType()); // the component requires an "id" field
+		components.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(tag));
 	}
 
 	@Override

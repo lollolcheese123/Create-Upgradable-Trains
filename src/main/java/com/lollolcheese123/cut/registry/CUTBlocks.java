@@ -2,6 +2,7 @@ package com.lollolcheese123.cut.registry;
 
 import com.lollolcheese123.cut.CreateUpgradableTrains;
 import com.lollolcheese123.cut.blocks.TrainEngineBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -14,6 +15,8 @@ public class CUTBlocks {
 			"train_engine",
 			TrainEngineBlock::new,
 			BlockBehaviour.Properties.of()
+					.strength(3.5F, 6.0F)
+					.sound(SoundType.METAL)
 	);
 
 	public static void register(IEventBus eventBus) {
