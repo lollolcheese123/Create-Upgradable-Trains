@@ -27,7 +27,7 @@ public final class CUTNetworking {
 		registrar.playToClient(
 				QuotePayload.TYPE,
 				QuotePayload.STREAM_CODEC,
-				TrainEngineScreen::handleIncomingQuote
+				(payload, context) -> TrainEngineScreen.handleIncomingQuote(payload, context)
 		);
 
 		registrar.playToServer(
