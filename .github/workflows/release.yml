@@ -1,0 +1,50 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+    paths: [gradle.properties]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: props
+        run: echo "version=$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '\r')" >> "$GITHUB_OUTPUT"
+
+      - name: Skip if version already released
+        id: exists
+        run: |
+          if git ls-remote --exit-code --tags origin "refs/tags/v${{ steps.props.outputs.version }}" >/dev/null; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-java@v4
+        if: steps.exists.outputs.skip != 'true'
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.exists.outputs.skip != 'true'
+
+      - name: Build
+        if: steps.exists.outputs.skip != 'true'
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Release
+        if: steps.exists.outputs.skip != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.props.outputs.version }}
+          files: build/libs/*.jar
+          generate_release_notes: true

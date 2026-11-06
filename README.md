@@ -1,9 +1,10 @@
-# Create: Upgradable Trains
+![Create: Upgradable Trains Logo](README_assets/CUT_title_logo.png)
+
 A Create mod addon that adds the ability to upgrade your trains and give them new stats!
 
 ## Features
 ### Train Types
-Train types are fully data-driven and are loaded from datapacks. In the event no custom types are loaded, a built-in preset will load instead (WIP).
+Train types are fully data-driven and are loaded from datapacks. In the event no custom types are loaded, a built-in preset will be loaded instead.
 
 Train types can be defined in datapacks under `cut/train_types`, and follow the following structure:
 ```
@@ -40,6 +41,8 @@ Right-clicking the Train Engine while not holding a Wrench will open its UI, sho
 Payment will be able to resolve from both the player's inventory and surrounding storage containers.
 
 Currently, only items and item tags are supported, but there are plans to support Fluids, Energy and Mekanism Gases in the future.
+
+The Train Engine block can be wrenched or broken with a pickaxe, and will retain its train type and consumed items.
 
 ### Create: Numismatics Integration
 The money cost can be paid similarly to item costs, and uses Numismatics as its money system.
