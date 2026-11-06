@@ -48,3 +48,17 @@ jobs:
           tag_name: v${{ steps.props.outputs.version }}
           files: build/libs/*.jar
           generate_release_notes: true
+
+      - name: Publish to Modrinth and CurseForge
+        if: steps.exists.outputs.skip != 'true'
+        continue-on-error: true
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: TCJ5qQLU
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+          curseforge-id: 1787943
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+          files: build/libs/*.jar
+          loaders: neoforge
+          game-versions: 1.21.1
+          java: 21
