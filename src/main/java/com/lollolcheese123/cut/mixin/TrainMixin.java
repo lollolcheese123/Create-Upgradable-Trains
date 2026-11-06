@@ -1,6 +1,9 @@
 package com.lollolcheese123.cut.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.lollolcheese123.cut.duck.TrainAddons;
 import com.lollolcheese123.cut.train.TrainType;
@@ -10,7 +13,6 @@ import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.Train;
 import com.simibubi.create.content.trains.graph.DimensionPalette;
 import com.simibubi.create.content.trains.graph.TrackGraph;
-import com.simibubi.create.infrastructure.config.AllConfigs;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -43,7 +45,7 @@ public abstract class TrainMixin implements TrainAddons {
 
 	@Unique private Boolean clientSide = null;
 
-	@Unique
+	@Unique @Override
 	public boolean CUT$isClientSide() {
 		if (clientSide != null) return clientSide;
 
@@ -111,42 +113,56 @@ public abstract class TrainMixin implements TrainAddons {
 		return original * CUT$getTrainType().accelMod();
 	}
 
-	@Unique
-	public float CUT$deceleration() {
-		float original = (fuelTicks > 0 ? AllConfigs.server().trains.poweredTrainAcceleration.getF()
-				: AllConfigs.server().trains.trainAcceleration.getF()) / 400;
-
-		return original * CUT$getTrainType().decelMod();
+	@Unique @Override
+	public float CUT$deceleration(float accel) {
+		return accel * CUT$getTrainType().decelModToApplyToAccel();
 	}
 
-	@Redirect(method = "tickPassiveSlowdown",
-				at = @At(value = "INVOKE",
-						target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
-	private float CUT$passiveDecel(Train train) {
-		return ((TrainAddons) train).CUT$deceleration();
+//	@Redirect(method = "tickPassiveSlowdown",
+//				at = @At(value = "INVOKE",
+//						target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
+//	private float CUT$passiveDecel(Train train) {
+	@WrapOperation(method = "tickPassiveSlowdown",
+					at = @At(value = "INVOKE",
+							target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
+	private float CUT$passiveDecel(Train train, Operation<Float> original) {
+		return ((TrainAddons) train).CUT$deceleration(original.call(train));
 	}
 
-	@Redirect(method = "approachTargetSpeed",
-				at = @At(value = "INVOKE",
-						target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
+//	@Redirect(method = "approachTargetSpeed",
+//				at = @At(value = "INVOKE",
+//						target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
+//	private float CUT$targetSpeedApproachAccelRate(
+//			Train train,
+//			@Local(name = "actualTarget") double actualTarget
+//	) {
+	@WrapOperation(method = "approachTargetSpeed",
+		at = @At(value = "INVOKE",
+				target = "Lcom/simibubi/create/content/trains/entity/Train;acceleration()F"))
 	private float CUT$targetSpeedApproachAccelRate(
-			Train train,
+			Train train, Operation<Float> original,
 			@Local(name = "actualTarget") double actualTarget
 	) {
+		float accel = original.call(train);
 		boolean braking = speed != 0 && (Math.abs(actualTarget) < Math.abs(speed)
 				|| Math.signum(speed) != Math.signum(actualTarget));
-		return braking ? CUT$deceleration() : acceleration();
+		return braking ? CUT$deceleration(accel) : accel;
 	}
 
-	@Inject(method = "burnFuel", at = @At("HEAD"), cancellable = true)
-	private void CUT$burnFuel(CallbackInfo ci) {
+//	@Inject(method = "burnFuel", at = @At("HEAD"), cancellable = true)
+//	private void CUT$burnFuel(CallbackInfo ci) {
+	@WrapMethod(method = "burnFuel")
+	private void CUT$burnFuel(Operation<Void> original) {
+		int before = fuelTicks;
+		original.call();
+		int consumed = before - fuelTicks;
+		if (consumed <= 0) return;
 		if (fuelTicks <= 0) return;
 
-		CUT$fuelRemainder += CUT$getTrainType().trueFuelMult();
+		CUT$fuelRemainder += consumed * CUT$getTrainType().trueFuelMult();
 		int whole = (int) CUT$fuelRemainder;
 		CUT$fuelRemainder -= whole;
 
-		fuelTicks = Math.max(0, fuelTicks - whole);
-		ci.cancel();
+		fuelTicks = Math.max(0, before - whole);
 	}
 }
