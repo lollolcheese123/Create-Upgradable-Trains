@@ -37,7 +37,7 @@ public record TrainType(
 			1,
 			1,
 			-1,
-			Optional.of("cut.gui.train_engine.default_type"),
+			Optional.of("cut.train_types.default.default"),
 			"Unnamed Train Type",
 			Map.of(),
 			0
@@ -123,4 +123,62 @@ public record TrainType(
 	}
 
 	public static final Comparator<TrainType> RANKING = Comparator.comparingInt(TrainType::tier).thenComparingDouble(TrainType::score);
+
+	public static TrainType create(
+			ResourceLocation id,
+			float maxSpeedMod,
+			float maxTurnSpeedMod,
+			float accelMod,
+			float decelMod,
+			float fuelEffMod,
+			int tier,
+			String translatableName,
+			String name,
+			Map<ItemOrTag, Integer> itemCost,
+			int moneyCost
+	) {
+		return new TrainType(
+				id,
+				maxSpeedMod,
+				maxTurnSpeedMod,
+				accelMod,
+				decelMod,
+				decelMod/accelMod,
+				fuelEffMod,
+				1/fuelEffMod,
+				tier,
+				Optional.of(translatableName),
+				name,
+				itemCost,
+				moneyCost
+		);
+	}
+	public static TrainType create(
+			ResourceLocation id,
+			float maxSpeedMod,
+			float maxTurnSpeedMod,
+			float accelMod,
+			float decelMod,
+			float fuelEffMod,
+			int tier,
+			String name,
+			Map<ItemOrTag, Integer> itemCost,
+			int moneyCost
+	) {
+		return new TrainType(
+				id,
+				maxSpeedMod,
+				maxTurnSpeedMod,
+				accelMod,
+				decelMod,
+				decelMod/accelMod,
+				fuelEffMod,
+				1/fuelEffMod,
+				tier,
+				Optional.empty(),
+				name,
+				itemCost,
+				moneyCost
+		);
+	}
 }
