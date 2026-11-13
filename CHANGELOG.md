@@ -8,8 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # [Alpha]
 
 ## [0.2-alpha] - 2026-11-13
-### Added
-
 
 ### Changed
 - Train upgrades now refund to storages before player inventory instead of the other way around.
