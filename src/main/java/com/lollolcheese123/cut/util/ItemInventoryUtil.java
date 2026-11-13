@@ -49,12 +49,13 @@ public final class ItemInventoryUtil {
 				int count = Math.min(left, item.getDefaultMaxStackSize());
 				left -= count;
 				ItemStack rest = new ItemStack(item, count);
-				rest = ItemHandlerHelper.insertItemStacked(playerInv, rest, false);
 
 				for (IItemHandler handler : nearby) {
 					if (rest.isEmpty()) break;
 					rest = ItemHandlerHelper.insertItemStacked(handler, rest, false);
 				}
+
+				rest = ItemHandlerHelper.insertItemStacked(playerInv, rest, false);
 
 				if (!rest.isEmpty()) player.drop(rest, false);
 			}

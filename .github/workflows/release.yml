@@ -26,6 +26,16 @@ jobs:
             echo "skip=true" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Extract changelog
+        if: steps.exists.outputs.skip != 'true'
+        run: |
+          awk -v v="${{ steps.props.outputs.version }}" '
+            index($0, "## [" v "]") == 1 { found = 1; next }
+            /^## / && found { exit }
+            found { print }
+          ' CHANGELOG.md > release_notes.md
+          test -s release_notes.md || { echo "No CHANGELOG.md entry for ${{ steps.props.outputs.version }}"; exit 1; }
+
       - uses: actions/setup-java@v4
         if: steps.exists.outputs.skip != 'true'
         with:
@@ -47,7 +57,7 @@ jobs:
         with:
           tag_name: v${{ steps.props.outputs.version }}
           files: build/libs/*.jar
-          generate_release_notes: true
+          body_path: release_notes.md
 
       - name: Publish to Modrinth and CurseForge
         if: steps.exists.outputs.skip != 'true'
@@ -59,6 +69,7 @@ jobs:
           curseforge-id: 1787943
           curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
           files: build/libs/*.jar
+          changelog-file: release_notes.md
           loaders: neoforge
           game-versions: 1.21.1
           java: 21
