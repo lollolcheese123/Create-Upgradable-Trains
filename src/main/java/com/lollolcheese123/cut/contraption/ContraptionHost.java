@@ -7,6 +7,7 @@ import com.lollolcheese123.cut.train.TrainTypeResolver;
 import com.lollolcheese123.cut.train.engine.EngineHost;
 import com.lollolcheese123.cut.train.engine.EngineTarget;
 import com.simibubi.create.content.contraptions.AbstractContraptionEntity;
+import com.simibubi.create.content.trains.entity.Carriage;
 import com.simibubi.create.content.trains.entity.CarriageContraptionEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -16,6 +17,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public record ContraptionHost(
@@ -42,7 +44,21 @@ public record ContraptionHost(
 	}
 	@Override
 	public List<IItemHandler> itemSources() {
-		return List.of(entity.getContraption().getStorage().getMountedItems());
+		List<IItemHandler> out = new ArrayList<>();
+
+		if (entity instanceof CarriageContraptionEntity cce && cce.getCarriage() != null) {
+			Carriage own = cce.getCarriage();
+			addStorage(out, own);
+			for (Carriage other : own.train.carriages)
+				if (other != own) addStorage(out, other);
+		} else out.add(entity.getContraption().getStorage().getMountedItems());
+
+		return out;
+	}
+	private static void addStorage(List<IItemHandler> out, Carriage carriage) {
+		CarriageContraptionEntity e = carriage.anyAvailableEntity();
+		if (e == null) return;
+		out.add(e.getContraption().getStorage().getMountedItems());
 	}
 
 	public TrainEngineData data() {

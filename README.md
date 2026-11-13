@@ -36,9 +36,9 @@ Each train type has its own stats that affect how it traverses the world, as mul
 ### Train Engine
 Every Create Train without a Train Engine will use the default train type. However, by placing a Train Engine on a train contraption, you are able to upgrade the train to new tiers by paying the predefined costs.
 
-Right-clicking the Train Engine while not holding a Wrench will open its UI, showing a list of all train types. Clicking on a train type will show its stats, and its resource cost. This resource cost will keep track of already paid items, reducing the amount of new items that are required to upgrade, and items that are no longer needed to achieve the type will be refunded. You only ever pay for your current type.
+Right-clicking the Train Engine (Even when it is on a contraption!) while not holding a Wrench will open its UI, showing a list of all train types. Clicking on a train type will show its stats, and its resource cost. This resource cost will keep track of already paid items, reducing the amount of new items that are required to upgrade, and items that are no longer needed to achieve the type will be refunded. You only ever pay for your current type.
 
-Payment will be able to resolve from both the player's inventory and surrounding storage containers.
+Payment will be able to resolve from both the player's inventory and surrounding storage containers when placed in the world. When on an assembled contraption/train, the contraption/train storage will be used instead, prioritising the carriage the Train Engine is on.
 
 Currently, only items and item tags are supported, but there are plans to support Fluids, Energy and Mekanism Gases in the future.
 

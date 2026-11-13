@@ -9,10 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2-alpha] - 2026-11-13
 ### Added
-- Train Engine block now works while the train is assembled, not only when it is disassembled at a station.
+
 
 ### Changed
 - Train upgrades now refund to storages before player inventory instead of the other way around.
+- Train Engine block now works while the train is assembled (using the train storage instead of surrounding blocks), not only when it is disassembled at a station.
 
 ## [0.1-alpha] - 2026-11-06
 
