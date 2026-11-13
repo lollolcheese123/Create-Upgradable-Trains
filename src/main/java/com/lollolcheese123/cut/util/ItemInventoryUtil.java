@@ -37,9 +37,8 @@ public final class ItemInventoryUtil {
 		return out;
 	}
 
-	public static void giveBack(Map<Item, Integer> refund, Level level, BlockPos pos, Player player) {
+	public static void giveBack(Map<Item, Integer> refund, List<IItemHandler> nearby, Player player) {
 		IItemHandler playerInv = new PlayerMainInvWrapper(player.getInventory());
-		List<IItemHandler> nearby = neighbours(level, pos);
 
 		for (Map.Entry<Item, Integer> entry : refund.entrySet()) {
 			Item item = entry.getKey();

@@ -1,4 +1,4 @@
-package com.lollolcheese123.cut.blocks.blockitem;
+package com.lollolcheese123.cut.blocks.train_engine;
 
 import com.lollolcheese123.cut.train.TrainType;
 import com.lollolcheese123.cut.train.TrainTypes;

@@ -1,7 +1,7 @@
 package com.lollolcheese123.cut.registry;
 
 import com.lollolcheese123.cut.CreateUpgradableTrains;
-import com.lollolcheese123.cut.blocks.TrainEngineBlock;
+import com.lollolcheese123.cut.blocks.train_engine.TrainEngineBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;

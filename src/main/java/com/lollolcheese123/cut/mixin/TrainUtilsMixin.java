@@ -29,7 +29,6 @@ public abstract class TrainUtilsMixin {
 		Train newTrain = cir.getReturnValue();
 		if (newTrain == train) return;
 
-
 		TrainAddons oldTrainData = (TrainAddons) train;
 		TrainAddons newTrainData = (TrainAddons) newTrain;
 

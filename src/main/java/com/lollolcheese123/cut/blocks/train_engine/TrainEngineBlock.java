@@ -1,7 +1,7 @@
-package com.lollolcheese123.cut.blocks;
+package com.lollolcheese123.cut.blocks.train_engine;
 
-import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
 import com.lollolcheese123.cut.client.gui.TrainEngineClient;
+import com.lollolcheese123.cut.train.engine.EngineTarget;
 import com.mojang.serialization.MapCodec;
 import com.simibubi.create.AllItems;
 import com.simibubi.create.content.equipment.wrench.IWrenchable;
@@ -98,7 +98,7 @@ public class TrainEngineBlock extends BaseEntityBlock implements EntityBlock, IW
 			Player player,
 			BlockHitResult hit
 	) {
-		if (level.isClientSide) TrainEngineClient.openScreen(pos, player);
+		if (level.isClientSide) TrainEngineClient.openScreen(new EngineTarget.InWorld(pos), player);
 		return InteractionResult.sidedSuccess(level.isClientSide);
 	}
 }

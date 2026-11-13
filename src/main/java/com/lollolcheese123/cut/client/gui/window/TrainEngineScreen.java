@@ -1,6 +1,6 @@
 package com.lollolcheese123.cut.client.gui.window;
 
-import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
+import com.lollolcheese123.cut.blocks.train_engine.TrainEngineBlockEntity;
 import com.lollolcheese123.cut.client.gui.TrainTypeOption;
 import com.lollolcheese123.cut.client.gui.widget.HitArea;
 import com.lollolcheese123.cut.client.gui.widget.TrainTypeCostDisplay;
@@ -10,6 +10,10 @@ import com.lollolcheese123.cut.packets.QuotePayload;
 import com.lollolcheese123.cut.packets.RequestQuotePayload;
 import com.lollolcheese123.cut.packets.SelectOptionPayload;
 import com.lollolcheese123.cut.registry.CUTTextures;
+import com.lollolcheese123.cut.train.engine.EngineHost;
+import com.lollolcheese123.cut.train.engine.EngineTarget;
+import com.lollolcheese123.cut.train.engine.TrainEngineLogic;
+import com.lollolcheese123.cut.train.engine.TrainEngineOptions;
 import net.createmod.catnip.gui.AbstractSimiScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -23,7 +27,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import java.util.List;
 
 public class TrainEngineScreen extends AbstractSimiScreen {
-	private final TrainEngineBlockEntity be;
+	private final EngineHost host;
 	private final Player player;
 	private final List<TrainTypeOption> options;
 	private TrainTypeOptionList list;
@@ -32,20 +36,21 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 	private HitArea confirm;
 	private TrainTypeOption selected;
 
-	private TrainEngineBlockEntity.Quote quote;
+	private TrainEngineLogic.Quote quote;
 	private ResourceLocation quotedId;
 	private int refreshTimer;
 
-	public TrainEngineScreen(TrainEngineBlockEntity be, Player player) {
+	public TrainEngineScreen(EngineHost host, Player player) {
 		super(Component.translatable("cut.gui.train_engine.title"));
-		this.be = be;
+		this.host = host;
 		this.player = player;
-		this.options = be.getOptions();
+		this.options = TrainEngineOptions.get(true);
 		this.selected = null;
+		ResourceLocation applied = host.data().trainTypeId;
 		for (TrainTypeOption option : this.options) {
-			if (option.id().equals(be.getTrainType())) {
+			if (option.id().equals(applied)) {
 				this.selected = option;
-				return;
+				break;
 			}
 		}
 	}
@@ -77,7 +82,7 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 		confirm = new HitArea(guiLeft + 201, guiTop + 196, 17, 17,
 				Component.translatable("cut.gui.train_engine.confirm"), () -> {
 			if (selected == null) return;
-			PacketDistributor.sendToServer(new SelectOptionPayload(be.getBlockPos(), selected.id()));
+			PacketDistributor.sendToServer(new SelectOptionPayload(host.target(), selected.id()));
 			onClose();
 		});
 		confirm.active = canConfirm(selected);
@@ -101,7 +106,7 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 	@Override
 	public void tick() {
 		super.tick();
-		if (be.isRemoved()) onClose();
+		if (!host.isValid()) onClose();
 
 		if (refreshTimer >= 10) {
 			requestQuote();
@@ -110,13 +115,15 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 		refreshTimer++;
 	}
 
-	public boolean isFor(BlockPos pos) { return be.getBlockPos().equals(pos); }
-
-	private void requestQuote() {
-		if (selected != null) PacketDistributor.sendToServer(new RequestQuotePayload(be.getBlockPos(), selected.id()));
+	public boolean isFor(EngineTarget target) {
+		return host.target().equals(target);
 	}
 
-	public void setQuote(ResourceLocation id, TrainEngineBlockEntity.Quote quote) {
+	private void requestQuote() {
+		if (selected != null) PacketDistributor.sendToServer(new RequestQuotePayload(host.target(), selected.id()));
+	}
+
+	public void setQuote(ResourceLocation id, TrainEngineLogic.Quote quote) {
 		this.quotedId = id;
 		this.quote = quote;
 		confirm.active = canConfirm(selected);
@@ -124,19 +131,19 @@ public class TrainEngineScreen extends AbstractSimiScreen {
 	}
 
 	private boolean canConfirm(TrainTypeOption o) {
-		if (o == null || o.id().equals(be.getTrainType())) return false;
+		if (o == null || o.id().equals(host.data().trainTypeId)) return false;
 		if (player.isCreative()) return true;
 		return quote != null && o.id().equals(quotedId) && quote.affordable();
 	}
 
 	public static void handleIncomingQuote(QuotePayload payload, IPayloadContext ctx) {
-		if (Minecraft.getInstance().screen instanceof TrainEngineScreen screen && screen.isFor(payload.pos()))
+		if (Minecraft.getInstance().screen instanceof TrainEngineScreen screen && screen.isFor(payload.target()))
 			screen.setQuote(payload.id(), payload.quote());
 	}
 
 	private int indexOfApplied() {
 		for (int i = 0; i < options.size(); i++)
-			if (options.get(i).id().equals(be.getTrainType())) return i;
+			if (options.get(i).id().equals(host.data().trainTypeId)) return i;
 		return -1;
 	}
 }

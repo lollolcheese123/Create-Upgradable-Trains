@@ -1,12 +1,10 @@
 package com.lollolcheese123.cut.events;
 
 import com.lollolcheese123.cut.CreateUpgradableTrains;
+import com.lollolcheese123.cut.client.ClientPayloadHandlers;
 import com.lollolcheese123.cut.client.data.ClientTrainTypes;
 import com.lollolcheese123.cut.client.gui.window.TrainEngineScreen;
-import com.lollolcheese123.cut.packets.QuotePayload;
-import com.lollolcheese123.cut.packets.RequestQuotePayload;
-import com.lollolcheese123.cut.packets.SelectOptionPayload;
-import com.lollolcheese123.cut.packets.SyncTrainTypesPayload;
+import com.lollolcheese123.cut.packets.*;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -28,6 +26,11 @@ public final class CUTNetworking {
 				QuotePayload.TYPE,
 				QuotePayload.STREAM_CODEC,
 				(payload, context) -> TrainEngineScreen.handleIncomingQuote(payload, context)
+		);
+		registrar.playToClient(
+				EngineDataSyncPayload.TYPE,
+				EngineDataSyncPayload.STREAM_CODEC,
+				ClientPayloadHandlers::handleEngineSync
 		);
 
 		registrar.playToServer(

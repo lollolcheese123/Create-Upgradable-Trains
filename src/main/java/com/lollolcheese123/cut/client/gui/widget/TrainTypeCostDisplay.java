@@ -1,9 +1,10 @@
 package com.lollolcheese123.cut.client.gui.widget;
 
-import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
+import com.lollolcheese123.cut.blocks.train_engine.TrainEngineBlockEntity;
 import com.lollolcheese123.cut.client.gui.helper.Animated;
 import com.lollolcheese123.cut.compat.NumismaticsCompat;
 import com.lollolcheese123.cut.compat.RecipeViewerCompat;
+import com.lollolcheese123.cut.train.engine.TrainEngineLogic;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -64,13 +65,13 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 		this.scrollAnim = new Animated(0, 120);
 	}
 
-	public void setQuote(TrainEngineBlockEntity.Quote quote) {
+	public void setQuote(TrainEngineLogic.Quote quote) {
 		entries.clear();
 		if (quote != null) buildEntries(quote);
 		scroll = Mth.clamp(scroll, 0, maxScroll());
 		scrollAnim.moveTo(scroll);
 	}
-	private void buildEntries(TrainEngineBlockEntity.Quote quote) {
+	private void buildEntries(TrainEngineLogic.Quote quote) {
 		if (quote.moneyNeeded() > 0) {
 			if (!ModList.get().isLoaded("numismatics")) {
 				entries.add(new Entry(
@@ -90,7 +91,7 @@ public class TrainTypeCostDisplay extends AbstractWidget {
 			}
 		}
 
-		for (TrainEngineBlockEntity.Line line : quote.lines()) {
+		for (TrainEngineLogic.Line line : quote.lines()) {
 			int owned = line.reused() + line.have();
 			boolean ok = owned >= line.total();
 

@@ -1,7 +1,7 @@
 package com.lollolcheese123.cut.registry;
 
 import com.lollolcheese123.cut.CreateUpgradableTrains;
-import com.lollolcheese123.cut.blocks.blockentity.TrainEngineBlockEntity;
+import com.lollolcheese123.cut.blocks.train_engine.TrainEngineBlockEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;

@@ -32,16 +32,10 @@ public final class InventorySnapshot {
 	}
 	private final List<Slot> slots = new ArrayList<>();
 
-	public static InventorySnapshot of(Level level, BlockPos pos, Player player) {
+	public static InventorySnapshot of(Collection<IItemHandler> sources, Player player) {
 		InventorySnapshot snapshot = new InventorySnapshot();
-
-		for (Direction dir : Direction.values()) {
-			IItemHandler handler = level.getCapability(Capabilities.ItemHandler.BLOCK, pos.relative(dir), dir.getOpposite());
-			if (handler != null) snapshot.add(handler);
-		}
-
+		for (IItemHandler handler : sources) snapshot.add(handler);
 		snapshot.add(new PlayerMainInvWrapper(player.getInventory()));
-
 		return snapshot;
 	}
 
